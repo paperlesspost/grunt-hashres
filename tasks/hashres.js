@@ -26,7 +26,10 @@ module.exports = function(grunt) {
       out           : this.data.out,
       encoding      : this.data.encoding,
       fileNameFormat: this.data.fileNameFormat,
-      renameFiles   : this.data.renameFiles
+      renameFiles   : this.data.renameFiles,
+      writeManifest : this.data.writeManifest,
+      manifestName  : this.data.manifestName,
+      manifestFile  : this.data.manifestFile
     });
   });
 };

@@ -10,13 +10,13 @@ var fs    = require('fs'),
     path  = require('path'),
     utils = require('./hashresUtils');
 
-var setupDefaultOptions = function(grunt, options) {
+var setupDefaultOptions = function(options) {
   return {
     files: Array.isArray(options.files) ? options.files : [options.files],
     out: Array.isArray(options.out) ? options.out: [options.out],
     encoding: (options.encoding || 'utf8'),
     fileNameFormat: (options.fileNameFormat || '${hash}.${name}.cache.${ext}'),
-    renameFiles: (options.renameFiles === undefined? true : false),
+    renameFiles: (options.renameFiles === undefined ? true : false),
     manifestName: "FileManifest",
     manifestFile: "manifest.js",
     writeManifest: options.writeManifest || false
