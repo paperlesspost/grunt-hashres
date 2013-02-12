@@ -29,7 +29,9 @@ module.exports = function(grunt) {
       renameFiles   : this.data.renameFiles,
       writeManifest : this.data.writeManifest,
       manifestName  : this.data.manifestName,
-      manifestFile  : this.data.manifestFile
+      manifestFile  : this.data.manifestFile,
+      baseDir       : this.data.baseDir,
+      httpDir       : this.data.httpDir
     });
   });
 };

@@ -19,7 +19,9 @@ var setupDefaultOptions = function(options) {
     renameFiles: (options.renameFiles === undefined ? true : false),
     manifestName: "FileManifest",
     manifestFile: "manifest.js",
-    writeManifest: options.writeManifest || false
+    writeManifest: options.writeManifest || false,
+    baseDir: options.baseDir || null,
+    httpDir: options.httpDir || null
   };
 };
 
@@ -31,13 +33,17 @@ var buildHashMapping = function(grunt, options) {
 
   // Renaming the files using a unique name
   grunt.file.expand(options.files).forEach(function(f) {
-    var md5 = utils.md5(f).slice(0, 8),
-        fileName = path.basename(f),
-        lastIndex = fileName.lastIndexOf('.'),
-        renamed = formatter({
-          hash: md5,
-          name: fileName.slice(0, lastIndex),
-          ext: fileName.slice(lastIndex + 1, fileName.length) });
+    var fileName = path.basename(f), md5, lastIndex, renamed;
+    if (options.baseDir) {
+      fileName = f.replace(options.baseDir, options.httpDir || '');
+    }
+    md5 = utils.md5(f).slice(0, 8);
+    lastIndex = fileName.lastIndexOf('.');
+    renamed = formatter({
+      hash: md5,
+      name: fileName.slice(0, lastIndex),
+      ext: fileName.slice(lastIndex + 1, fileName.length)
+    });
 
     // Mapping the original name with hashed one for later use.
     nameToHashedName[fileName] = renamed;
@@ -54,7 +60,7 @@ var buildHashMapping = function(grunt, options) {
 
 var writeManifest = function(grunt, options, nameToHashedName) {
   grunt.log.ok('writing manifest to ' + options.manifestFile);
-  grunt.file.write(options.manifestFile, options.manifestName + " = " + JSON.stringify(nameToHashedName) + ";", options.encoding);
+  grunt.file.write(options.manifestFile, options.manifestName + " = " + JSON.stringify(nameToHashedName, null, "  ") + ";", options.encoding);
 };
 
 exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileNameFormat) {
