@@ -10,31 +10,27 @@ var fs    = require('fs'),
     path  = require('path'),
     utils = require('./hashresUtils');
 
-exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileNameFormat) {
-  var files            = options.files,
-      out              = options.out,
-      encoding         = options.encoding,
-      fileNameFormat   = options.fileNameFormat,
-      renameFiles      = options.renameFiles,
-      nameToHashedName = {},
+var setupDefaultOptions = function(grunt, options) {
+  return {
+    files: Array.isArray(options.files) ? options.files : [options.files],
+    out: Array.isArray(options.out) ? options.out: [options.out],
+    encoding: (options.encoding || 'utf8'),
+    fileNameFormat: (options.fileNameFormat || '${hash}.${name}.cache.${ext}'),
+    renameFiles: (options.renameFiles === undefined? true : false),
+    manifestName: "FileManifest",
+    manifestFile: "manifest.js",
+    writeManifest: options.writeManifest || false
+  };
+};
+
+var buildHashMapping = function(grunt, options) {
+  var nameToHashedName = {},
       formatter        = null;
 
-  grunt.log.ok('out: ' + out);
-  encoding = (encoding || 'utf8');
-  grunt.log.debug('Using encoding ' + encoding);
-  fileNameFormat = (fileNameFormat || '${hash}.${name}.cache.${ext}');
-  grunt.log.debug('Using fileNameFormat ' + fileNameFormat);
-  renameFiles = renameFiles === undefined? true : false;
-  grunt.log.debug(renameFiles? 'Renaming files' : 'Not renaming files');
-
-  formatter = utils.compileFormat(fileNameFormat);
-
-  // Converting the file to an array if is only one
-  files = Array.isArray(files) ? files : [files];
-  out = Array.isArray(out) ? out : [out];
+  formatter = utils.compileFormat(options.fileNameFormat);
 
   // Renaming the files using a unique name
-  grunt.file.expand(files).forEach(function(f) {
+  grunt.file.expand(options.files).forEach(function(f) {
     var md5 = utils.md5(f).slice(0, 8),
         fileName = path.basename(f),
         lastIndex = fileName.lastIndexOf('.'),
@@ -47,11 +43,34 @@ exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileName
     nameToHashedName[fileName] = renamed;
 
     // Renaming the file
-    if(renameFiles) {
+    if(options.renameFiles) {
       fs.renameSync(f, path.resolve(path.dirname(f), renamed));
     }
     grunt.log.write(f + ' ').ok(renamed);
   });
+
+  return nameToHashedName;
+};
+
+var writeManifest = function(grunt, options, nameToHashedName) {
+  grunt.file.write(options.manifestFile, options.manifestName + " = " + JSON.stringify(nameToHashedName) + ";", options.encoding);
+};
+
+exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileNameFormat) {
+  options = setupDefaultOptions(options);
+  var files            = options.files,
+      out              = options.out,
+      encoding         = options.encoding,
+      fileNameFormat   = options.fileNameFormat,
+      renameFiles      = options.renameFiles,
+      nameToHashedName = {};
+
+  grunt.log.ok('out: ' + out);
+  grunt.log.debug('Using encoding ' + encoding);
+  grunt.log.debug('Using fileNameFormat ' + fileNameFormat);
+  grunt.log.debug(renameFiles ? 'Renaming files' : 'Not renaming files');
+
+  nameToHashedName = buildHashMapping(grunt, options);
 
   // Substituting references to the given files with the hashed ones.
   grunt.file.expand(out).forEach(function(f) {
@@ -63,4 +82,8 @@ exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileName
     grunt.log.debug('Saving the updated contents of the outination file');
     fs.writeFileSync(f, outContents, encoding);
   });
+
+  if (options.writeManifest) {
+    writeManifest(grunt, options, nameToHashedName);
+  }
 };
