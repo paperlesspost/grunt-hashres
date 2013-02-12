@@ -17,8 +17,8 @@ var setupDefaultOptions = function(options) {
     encoding: (options.encoding || 'utf8'),
     fileNameFormat: (options.fileNameFormat || '${hash}.${name}.cache.${ext}'),
     renameFiles: (options.renameFiles === undefined ? true : false),
-    manifestName: "FileManifest",
-    manifestFile: "manifest.js",
+    manifestName: options.manifestName || "FileManifest",
+    manifestFile: options.manifestFile || "manifest.js",
     writeManifest: options.writeManifest || false,
     baseDir: options.baseDir || null,
     httpDir: options.httpDir || null
