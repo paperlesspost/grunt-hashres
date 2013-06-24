@@ -12,10 +12,11 @@ var fs    = require('fs'),
 
 var buildHashMapping = function(grunt, options) {
   var nameToHashedName = {},
+      files            = Array.isArray(options.src) ? options.src : [options.src],
       formatter        = utils.compileFormat(options.fileNameFormat);
 
   // Renaming the files using a unique name
-  grunt.file.expand(options.src).forEach(function(f) {
+  grunt.file.expand(files).forEach(function(f) {
     var fileName = path.basename(f), md5, lastIndex, renamed;
     if (options.baseDir) {
       fileName = f.replace(options.baseDir, options.httpDir || '');
@@ -47,8 +48,7 @@ var writeManifest = function(grunt, options, nameToHashedName) {
 };
 
 exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileNameFormat) {
-  var files            = Array.isArray(options.src) ? options.src : [options.src],
-      out              = Array.isArray(options.out) ? options.out: [options.out],
+  var out              = Array.isArray(options.out) ? options.out: [options.out],
       encoding         = options.encoding,
       fileNameFormat   = options.fileNameFormat,
       renameFiles      = options.renameFiles,
