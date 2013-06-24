@@ -18,8 +18,8 @@ module.exports = function(grunt) {
       'hashres',
       'Hashes your resources and updates the files that refer to them',
       function() {
-    // Required properties: 'files' and 'out'
-    this.requiresConfig('files', 'out');
+    // Required properties: 'src' and 'out'
+    this.requiresConfig('src', 'out');
     var options = this.options({
       encoding: 'utf8',
       fileNameFormat: '${hash}.${name}.cache.${ext}',
