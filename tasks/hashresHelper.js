@@ -10,26 +10,9 @@ var fs    = require('fs'),
     path  = require('path'),
     utils = require('./hashresUtils');
 
-var setupDefaultOptions = function(options) {
-  return {
-    files: Array.isArray(options.files) ? options.files : [options.files],
-    out: Array.isArray(options.out) ? options.out: [options.out],
-    encoding: (options.encoding || 'utf8'),
-    fileNameFormat: (options.fileNameFormat || '${hash}.${name}.cache.${ext}'),
-    renameFiles: (options.renameFiles === undefined ? true : false),
-    manifestName: options.manifestName || "FileManifest",
-    manifestFile: options.manifestFile || "manifest.js",
-    writeManifest: options.writeManifest || false,
-    baseDir: options.baseDir || null,
-    httpDir: options.httpDir || null
-  };
-};
-
 var buildHashMapping = function(grunt, options) {
   var nameToHashedName = {},
-      formatter        = null;
-
-  formatter = utils.compileFormat(options.fileNameFormat);
+      formatter        = utils.compileFormat(options.fileNameFormat);
 
   // Renaming the files using a unique name
   grunt.file.expand(options.files).forEach(function(f) {
@@ -65,8 +48,8 @@ var writeManifest = function(grunt, options, nameToHashedName) {
 
 exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileNameFormat) {
   options = setupDefaultOptions(options);
-  var files            = options.files,
-      out              = options.out,
+  var files            = Array.isArray(options.files) ? options.files : [options: files],
+      out              = Array.isArray(options.out) ? options.out: [options.out],
       encoding         = options.encoding,
       fileNameFormat   = options.fileNameFormat,
       renameFiles      = options.renameFiles,
@@ -81,8 +64,9 @@ exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileName
 
   // Substituting references to the given files with the hashed ones.
   grunt.file.expand(out).forEach(function(f) {
-    var outContents = fs.readFileSync(f, encoding);
-    for (var name in nameToHashedName) {
+    var name,
+        outContents = fs.readFileSync(f, encoding);
+    for (name in nameToHashedName) {
       grunt.log.debug('Substituting ' + name + ' by ' + nameToHashedName[name]);
       outContents = outContents.replace(name, nameToHashedName[name]);
     }

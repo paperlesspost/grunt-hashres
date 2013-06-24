@@ -21,17 +21,16 @@ module.exports = function(grunt) {
     // Required properties: 'files' and 'out'
     this.requiresConfig(this.name + '.' + this.target + '.files');
     this.requiresConfig(this.name + '.' + this.target + '.out');
-    helper.hashAndSub(grunt, {
-      files         : this.data.files,
-      out           : this.data.out,
-      encoding      : this.data.encoding,
-      fileNameFormat: this.data.fileNameFormat,
-      renameFiles   : this.data.renameFiles,
-      writeManifest : this.data.writeManifest,
-      manifestName  : this.data.manifestName,
-      manifestFile  : this.data.manifestFile,
-      baseDir       : this.data.baseDir,
-      httpDir       : this.data.httpDir
+    var options = this.options({
+      encoding: 'utf8',
+      fileNameFormat: '${hash}.${name}.cache.${ext}',
+      renameFiles: true,
+      writeManifest: false,
+      manifestName: 'FileManifest',
+      manifestFile: 'manifest.js',
+      baseDir: null,
+      httpDir: null
     });
+    helper.hashAndSub(grunt, options);
   });
 };
