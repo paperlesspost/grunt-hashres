@@ -48,7 +48,7 @@ var writeManifest = function(grunt, options, nameToHashedName) {
 
 exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileNameFormat) {
   options = setupDefaultOptions(options);
-  var files            = Array.isArray(options.files) ? options.files : [options: files],
+  var files            = Array.isArray(options.files) ? options.files : [options.files],
       out              = Array.isArray(options.out) ? options.out: [options.out],
       encoding         = options.encoding,
       fileNameFormat   = options.fileNameFormat,
