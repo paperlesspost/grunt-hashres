@@ -19,7 +19,8 @@ module.exports = function(grunt) {
       'Hashes your resources and updates the files that refer to them',
       function() {
     // Required properties: 'src' and 'out'
-    this.requiresConfig('src', 'out');
+    this.requiresConfig(this.name + '.' + this.target + '.src');
+    this.requiresConfig(this.name + '.' + this.target + '.out');
     var options = this.options({
       encoding: 'utf8',
       fileNameFormat: '${hash}.${name}.cache.${ext}',
