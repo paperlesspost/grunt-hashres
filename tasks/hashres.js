@@ -19,8 +19,6 @@ module.exports = function(grunt) {
       'Hashes your resources and updates the files that refer to them',
       function() {
     // Required properties: 'src' and 'out'
-    this.requiresConfig(this.name + '.' + this.target + '.src');
-    this.requiresConfig(this.name + '.' + this.target + '.out');
     var options = this.options({
       encoding: 'utf8',
       fileNameFormat: '${hash}.${name}.cache.${ext}',
@@ -31,6 +29,14 @@ module.exports = function(grunt) {
       baseDir: null,
       httpDir: null
     });
+    if(!options.src) {
+      grunt.log.error('no src files specified');
+      return false;
+    }
+    if(!options.out) {
+      grunt.log.error('no out files specified');
+      return false;
+    }
     helper.hashAndSub(grunt, options);
   });
 };
