@@ -44,7 +44,7 @@ var buildHashMapping = function(grunt, options) {
 
 var writeManifest = function(grunt, options, nameToHashedName) {
   grunt.log.ok('writing manifest to ' + options.manifestFile);
-  grunt.file.write(options.manifestFile, options.manifestName + " = " + JSON.stringify(nameToHashedName, null, "  ") + ";", options.encoding);
+  grunt.file.write(options.manifestFile, options.manifestName + " = " + JSON.stringify(nameToHashedName, null, "  ") + ";", { encoding: options.encoding });
 };
 
 exports.hashAndSub = function(grunt, options) { //files, out, encoding, fileNameFormat) {
